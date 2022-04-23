@@ -104,7 +104,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: yarn build
+        # Get cached node_modules to fast workflow
+      - name: Use cached node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            nodeModules-
+
+        # Install Dependencies
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Building Application...
+        run: yarn build
       - uses: amondnet/vercel-action@v20 #deploy
         with:
           vercel-token: ${{ secrets.VERCEL_GITHUB_ACTIONS_TOKEN }} # Required
