@@ -93,7 +93,7 @@ jobs:
       - name: Run Tests
         run: yarn test:ci
 
-  test-coverage:
+  coverage:
       environment:
           name: dev
 
