@@ -94,13 +94,14 @@ jobs:
         run: yarn test:ci
 
   coverage:
+      runs-on: ubuntu-latest
+      
       environment:
           name: dev
 
         # Only run if tests run ok
         needs: [lint, test]
 
-        runs-on: ubuntu-latest
 
         steps:
           - uses: actions/checkout@master
