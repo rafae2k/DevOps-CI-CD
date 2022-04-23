@@ -6,7 +6,6 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   pull_request:
-    types: [opened, syncronize]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -94,3 +93,23 @@ jobs:
         # Run ESLint
       - name: Run Tests
         run: yarn test:ci
+
+  deploy:
+    environment:
+      name: dev
+
+    # Only run if tests run ok
+    needs: test
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn build
+      - uses: amondnet/vercel-action@v20 #deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_GITHUB_ACTIONS_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
+          vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}} #Required
+          working-directory: ./sub-directory
