@@ -6,6 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   pull_request:
+  push:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -99,11 +100,12 @@ jobs:
       name: dev
 
     # Only run if tests run ok
-    needs: test
+    needs: [lint, test]
 
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         # Get cached node_modules to fast workflow
       - name: Use cached node_modules
         uses: actions/cache@v2
@@ -119,11 +121,11 @@ jobs:
 
       - name: Building Application...
         run: yarn build
-      - uses: amondnet/vercel-action@v20 #deploy
+
+      - uses: BetaHuhn/deploy-to-vercel-action@latest #deploy
         with:
-          vercel-token: ${{ secrets.VERCEL_GITHUB_ACTIONS_TOKEN }} # Required
-          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
-          vercel-args: '--prod' #Optional
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}} #Required
-          working-directory: ./sub-directory
+          VERCEL_TOKEN: ${{ secrets.VERCEL_GITHUB_ACTIONS_TOKEN }} # Required
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #Optional
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID}} #Required
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID}} #Required
+          PRODUCTION: false # Don't deploy to production environment
