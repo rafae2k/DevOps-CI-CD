@@ -3,10 +3,7 @@
 name: CI
 
 # Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  pull_request:
-  push:
+on: [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -95,12 +92,25 @@ jobs:
       - name: Run Tests
         run: yarn test:ci
 
+  test-coverage:
+      environment:
+          name: dev
+
+        # Only run if tests run ok
+        needs: [lint, test]
+
+        runs-on: ubuntu-latest
+
+        steps:
+          - uses: actions/checkout@master
+          - uses: codecov/codecov-action@v2
+
   deploy:
     environment:
       name: dev
 
     # Only run if tests run ok
-    needs: [lint, test]
+    needs: [lint, test, test-coverage]
 
     runs-on: ubuntu-latest
 
