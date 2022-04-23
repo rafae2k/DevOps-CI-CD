@@ -94,8 +94,9 @@ jobs:
         run: yarn test:ci
       
       - name: Generate coverage report
-      run: |
-        yarn jest --coverage
+        run: |
+          yarn jest --coverage
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
 
