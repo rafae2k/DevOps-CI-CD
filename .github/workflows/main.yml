@@ -92,27 +92,19 @@ jobs:
         # Run ESLint
       - name: Run Tests
         run: yarn test:ci
-
-  coverage:
-      runs-on: ubuntu-latest
       
-      environment:
-          name: dev
-
-        # Only run if tests run ok
-        needs: [lint, test]
-
-
-        steps:
-          - uses: actions/checkout@master
-          - uses: codecov/codecov-action@v2
+      - name: Generate coverage report
+      run: |
+        yarn jest --coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
 
   deploy:
     environment:
       name: dev
 
     # Only run if tests run ok
-    needs: [lint, test, test-coverage]
+    needs: [lint, test]
 
     runs-on: ubuntu-latest
 
